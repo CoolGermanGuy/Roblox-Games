@@ -28,10 +28,10 @@ local ObjectKinds = {
 
 
 -- New Object
-function Object.New(kind: string, position: Vector3, override: {})
+function Object.Init(kind: string, position: Vector3, override: {})
 	local newObject = {}
 	newObject.Kind = kind
-	newObject.Part = ObjectKinds[kind].Part:Clone()
+	newObject.Part = ObjectKinds[kind]["Part"]:Clone()
 	newObject.Part.Position = position
 	
 	-- loop to assign default or override values
@@ -50,6 +50,12 @@ function Object.New(kind: string, position: Vector3, override: {})
 end
 
 -- Functions
+function Object:New(kind: string, override: {})
+	local newObject = Object.Init(kind, Vector3.new(0,0,0), override)
+	print(newObject.Part)
+	return newObject
+end
+
 function Object:Appear()
 	self.Part.Transparency = 0
 end
