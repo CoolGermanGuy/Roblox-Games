@@ -1,15 +1,19 @@
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- requirements
-local Object = require(ReplicatedStorage.Object)
-local Map = require(ReplicatedStorage.Map)
+local Object = require(ReplicatedStorage:WaitForChild("Object"))
+local Map = require(ReplicatedStorage:WaitForChild("Map"))
 
 -- Script
 local myMap = Map.New(Vector3.new(10,5,10))
-print(myMap)
-myMap[1][1][1]["part"] = Object.New("Grass", myMap[1][1][1]["position"], {})
-myMap[10][5][10]["part"] = Object.New("Wall", myMap[10][5][10]["position"], {})
+-- test all kinds
+myMap:SetObject(1, 1, 1, Object:New("Grass", {}))
+myMap:SetObject(5, 2, 5, Object:New("Water", {}))
 
-myMap[5][2][5]["part"] = Object.New("Water", myMap[5][2][5]["position"], {})
+myMap:SetObject(10, 5, 10, Object:New("Wall", {}))
+-- test override
+--myMap:SetObject(1, 1, 2, Object:New("Grass", {}))
+myMap:SetObject(1, 1, 3, Object:New("Grass", {["Transparency"] = 0.5}))
+--myMap:SetObject(1, 1, 4, Object:New("Grass", {["Walkable"] = false}))
 
 print(myMap)
