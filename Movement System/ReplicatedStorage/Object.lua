@@ -8,39 +8,42 @@ Object.__index = Object
 -- Object Kinds
 local ObjectKinds = {
 	["Grass"] = {
-		["walkable"] = true,
-		["part"] = ReplicatedStorage.Objects.Grass,
+		["Walkable"] = true,
+		["Part"] = ReplicatedStorage.Objects.Grass,
 	},
 	["Wall"] = {
-		["walkable"] = false,
-		["part"] = ReplicatedStorage.Objects.Wall,
+		["Walkable"] = false,
+		["Part"] = ReplicatedStorage.Objects.Wall,
 	},
 	["Water"] = {
-		["walkable"] = false,
-		["part"] = ReplicatedStorage.Objects.Water,
+		["Walkable"] = false,
+		["Part"] = ReplicatedStorage.Objects.Water,
 	},
 	["Air"] = {
-		["walkable"] = false,
-		["part"] = ReplicatedStorage.Objects.Air,
-		["transparency"] = 1,
+		["Walkable"] = false,
+		["Part"] = ReplicatedStorage.Objects.Air,
+		["Transparency"] = 1,
 	},
 }
 
 
 -- New Object
 function Object.New(kind: string, position: Vector3, override: {})
-	print(override)
 	local newObject = {}
 	newObject.Kind = kind
-	--newObject.Position = position
-	if override["walkable"] ~= nil then
-		newObject.Walkable = override["walkable"]
-	else
-		newObject.Walkable = ObjectKinds[kind]["walkable"] 
-	end
-	newObject.Part = ObjectKinds[kind]["part"]:Clone()
+	newObject.Part = ObjectKinds[kind].Part:Clone()
 	newObject.Part.Position = position
-	newObject.Part.Transparency = ObjectKinds[kind]["transparency"] or override["transparency"] or 0
+	
+	-- loop to assign default or override values
+	for ObjectKind, ValueTable in ObjectKinds do
+		for i, v in ValueTable do
+			if override[i] ~= nil then -- if override has e.g. "walkable" then set it to that value
+				newObject[i] = override[i]
+			else -- if it doesn't set it to the default value
+				newObject[i] = ObjectKinds[kind][i]
+			end
+		end
+	end
 	newObject.Part.Parent = workspace
 	setmetatable(newObject, Object)
 	return newObject
