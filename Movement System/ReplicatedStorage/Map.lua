@@ -19,7 +19,9 @@ function Map.New(size: Vector3)
 			for z = 1, size.Z do
 				newMap[x][y][z] = {}
 				newMap[x][y][z].Position = Vector3.new(size.X + (8*x), size.Y + (8*y), size.Z + (8*z))
-				newMap[x][y][z].Part = Object.New("Air", Vector3.new(size.X + (8*x), size.Y + (8*y), size.Z + (8*z)), {})
+				--newMap[x][y][z].Part = Object.Init("Air", Vector3.new(size.X + (8*x), size.Y + (8*y), size.Z + (8*z)), {})
+				--newMap:SetObject(x, y, z, Object:New("Air", {}))
+				newMap[x][y][z].Part = Object:New("Air", {})
 			end
 		end
 	end
@@ -29,13 +31,10 @@ end
 
 -- Functions
 function Map:SetObject(x: int, y: int, z: int, Object: Object)
-	self[x][y][z].Part = Object
+	print(self[x][y][z].Position)
 	Object.Position = self[x][y][z].Position
 	Object.Part.Position = Object.Position
-end
-
-function Map:RemoveObject()
-	print("okay")
+	self[x][y][z].Part = Object
 end
 
 return Map
