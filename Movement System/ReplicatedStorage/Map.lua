@@ -8,8 +8,9 @@ local Map = {}
 Map.__index = Map
 
 -- New
-function Map:New(size: Vector3)
+function Map:New(position: Vector3, size: Vector3)
 	local newMap = {}
+	newMap.Position = position
 	newMap.Size = size
 	-- init map
 	for x = 1, size.X do
@@ -27,7 +28,7 @@ end
 
 -- Methods
 function Map:GetPosition(x: int, y: int, z: int)
-	return Vector3.new(self.Size.X + (8*x), self.Size.Y + (8*y), self.Size.Z + (8*z))
+	return Vector3.new(self.Position.X + self.Size.X + (8*x), self.Position.Y + self.Size.Y + (8*y), self.Position.Z + self.Size.Z + (8*z))
 end
 
 function Map:SetCell(x: int, y: int, z: int, Object: Object)
