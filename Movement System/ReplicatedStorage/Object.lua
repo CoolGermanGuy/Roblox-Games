@@ -1,6 +1,5 @@
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
 -- Init
 local Object = {}
 Object.__index = Object
@@ -26,42 +25,29 @@ local ObjectKinds = {
 	},
 }
 
-
--- New Object
-function Object.Init(kind: string, position: Vector3, override: {})
+-- New
+function Object.New(kind: string, override: {})
 	local newObject = {}
 	newObject.Kind = kind
-	newObject.Part = ObjectKinds[kind]["Part"]:Clone()
-	newObject.Part.Position = position
+	newObject.Part = ObjectKinds[kind].Part:Clone()
 	
 	-- loop to assign default or override values
 	for ObjectKind, ValueTable in ObjectKinds do
-		for i, v in ValueTable do
-			if override[i] ~= nil then -- if override has e.g. "walkable" then set it to that value
-				newObject[i] = override[i]
-			else -- if it doesn't set it to the default value
-				newObject[i] = ObjectKinds[kind][i]
+		for Property in ValueTable do
+			if override and override[Property] ~= nil then -- if override has a property OR the part has a value
+				newObject[Property] = override[Property]
+			else
+				newObject[Property] = ObjectKinds[kind][Property] -- if it doesn't set it to default kind value
 			end
 		end
 	end
+	
 	newObject.Part.Parent = workspace
 	setmetatable(newObject, Object)
 	return newObject
+	
 end
 
--- Functions
-function Object:New(kind: string, override: {})
-	local newObject = Object.Init(kind, Vector3.new(0,0,0), override)
-	print(newObject.Part)
-	return newObject
-end
-
-function Object:Appear()
-	self.Part.Transparency = 0
-end
-
-function Object:Disappear()
-	self.Part.Transparency = 1
-end
+-- Methods
 
 return Object
