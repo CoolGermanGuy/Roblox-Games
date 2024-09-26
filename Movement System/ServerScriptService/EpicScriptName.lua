@@ -4,7 +4,15 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Object = require(ReplicatedStorage:WaitForChild("Object"))
 local Map = require(ReplicatedStorage:WaitForChild("Map"))
 
-local myMap = Map:New(Vector3.new(10,5,0))
-print(myMap)
+local testMap = Map:New(Vector3.new(10, 4, 10))
+print(testMap)
 
-myMap:Build("test")
+testMap:Build("test")
+
+print(testMap)
+
+task.wait(2)
+testMap:ShowDebug()
+
+task.wait(5)
+testMap:HideDebug()
