@@ -104,4 +104,22 @@ function Map:ShowDebug()
 	end
 end
 
+function Map:HideDebug()
+	for x = 1, self.Size.X, 1 do
+		for y = 1, self.Size.Y, 1 do
+			for z = 1, self.Size.Z, 1 do
+				-- script
+				if self[x][y][z].Part then
+					for index, child in self[x][y][z].Part:GetChildren() do
+						if child:IsA("SurfaceGui") then
+							child:Destroy()
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+
 return Map
