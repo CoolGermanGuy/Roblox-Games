@@ -4,12 +4,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Object = require(ReplicatedStorage:WaitForChild("Object"))
 local Map = require(ReplicatedStorage:WaitForChild("Map"))
 
-local testMap = Map:New(Vector3.new(0, 0, 0), Vector3.new(10, 4, 10))
+local testMap = Map:New(Vector3.new(0, 4, 0), Vector3.new(10, 4, 10))
 testMap:Build("test")
+testMap:ShowDebug()
 
-local testMap2 = Map:New(Vector3.new(0, 0, 100), Vector3.new(10, 4, 10))
-testMap2:Build("test")
-
-task.wait(2)
-testMap:SetCell(1, 4, 10, Object.New("Water"))
-testMap2:SetCell(1, 4, 10, Object.New("Water"))
+print(testMap.Position)
+print("1 1 1", testMap:GetPosition(1, 1, 1))
+print("1 1 2", testMap:GetPosition(1, 1, 2))
+print("2 2 2", testMap:GetPosition(2, 2, 2))
