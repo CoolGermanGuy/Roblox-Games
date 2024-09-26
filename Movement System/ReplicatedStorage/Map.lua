@@ -29,6 +29,7 @@ end
 -- Methods
 function Map:GetPosition(x: int, y: int, z: int)
 	return Vector3.new(self.Position.X + self.Size.X + (8*x), self.Position.Y + self.Size.Y + (8*y), self.Position.Z + self.Size.Z + (8*z))
+	--return Vector3.new(self.Position.X + self.Size.X + (8*x) - 18, self.Position.Y + self.Size.Y + (8*y) - 12, self.Position.Z + self.Size.Z + (8*z) - 18)
 end
 
 function Map:SetCell(x: int, y: int, z: int, Object: Object)
