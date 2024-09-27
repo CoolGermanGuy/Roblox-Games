@@ -28,6 +28,13 @@ local ObjectKinds = {
 -- New
 function Object.New(kind: string, override: {})
 	local newObject = {}
+	if kind == "Random" then
+		local keys = {}
+		for key in pairs(ObjectKinds) do
+			table.insert(keys, key)
+		end
+		kind = keys[math.random(#keys)]
+	end
 	newObject.Kind = kind
 	newObject.Part = ObjectKinds[kind]["Part"]:Clone()
 	
@@ -43,9 +50,10 @@ function Object.New(kind: string, override: {})
 	newObject.Part.Parent = workspace
 	setmetatable(newObject, Object)
 	return newObject
-	
 end
 
 -- Methods
+
+
 
 return Object
