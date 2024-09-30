@@ -4,9 +4,41 @@ local Players = game:GetService("Players")
 
 -- Requirements
 local GameHandler = require(ReplicatedStorage:WaitForChild("GameHandler"))
+local Utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
 -- Variables
-
+local Directions = {
+	["Left"] = {
+		x = 0,
+		y = 0,
+		z = -1
+	},
+	["Right"] = {
+		x = 0,
+		y = 0,
+		z = 1
+	},
+	["Back"] = {
+		x = -1,
+		y = 0,
+		z = 0
+	},
+	["Front"] = {
+		x = 1,
+		y = 0,
+		z = 0
+	},
+	["Down"] = {
+		x = 0,
+		y = -1,
+		z = 0
+	},
+	["Up"] = {
+		x = 0,
+		y = 1,
+		z = 0
+	}
+}
 -- Init
 local Player = {}
 Player.__index = Player
@@ -37,7 +69,7 @@ function Player:GetGame()
 end
 
 function Player:GetMap()
-	return GameHandler:GetMap(self.GameIndex)
+	return GameHandler.GetMap(self.GameIndex)
 end
 
 function Player:GetEnemies()
@@ -63,6 +95,31 @@ function Player:Heal(amount: number)
 		self.Health = self.MaxHealth
 	else
 		self.Health += amount
+	end
+end
+
+function Player:MoveTo(x: number, y: number, z: number)
+	self.Position = {
+		x = x,
+		y = y,
+		z = z
+	}
+	self.Character.HumanoidRootPart.Position = Utils:GetObjectPosition(x, y, z, self)
+end
+
+function Player:Move(direction: string)
+	local newX = self.Position.x + Directions[direction].x
+	local newY = self.Position.y + Directions[direction].y
+	local newZ = self.Position.z + Directions[direction].z
+
+	local map = self:GetMap()
+
+	if map[newX][newY - 1][newZ].Walkable then
+		self.Position.x = newX
+		self.Position.y = newY
+		self.Position.z = newZ
+		
+		self.Character.HumanoidRootPart.Position = map:GetObjectPosition(newX, newY, newZ)
 	end
 end
 
