@@ -7,6 +7,8 @@ local GameHandler = require(ReplicatedStorage:WaitForChild("GameHandler"))
 local Utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
 -- Variables
+local players = {}
+
 local Directions = {
 	["Left"] = {
 		x = 0,
@@ -51,14 +53,16 @@ function Player.New(player: Player)
 	newPlayer.Player = player
 	newPlayer.Character = player.Character or player.CharacterAdded:Wait()
 	newPlayer.MaxHealth = 100
-	newPlayer.Healt = 100
+	newPlayer.Health = 100
+	newPlayer.AvailableMoves = 5 
 	newPlayer.Position = {
 		x = 0,
 		y = 0,
 		z = 0
 	}
-
+	
 	setmetatable(newPlayer, Player)
+	players[player.UserId] = newPlayer
 	return newPlayer
 end
 
@@ -76,6 +80,10 @@ function Player:GetEnemies()
 	return GameHandler:GetEnemies(self.GameIndex)
 end
 --		Getters End
+
+function Player:GetPlayer(player: Player)
+	return players[player.UserId]
+end
 
 function Player:Die()
 	print("im gonna make this later")
