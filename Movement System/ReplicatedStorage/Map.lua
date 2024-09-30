@@ -2,7 +2,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- Requirements
 local Object = require(ReplicatedStorage:WaitForChild("Object"))
-
+local GameHandler = require(ReplicatedStorage:WaitForChild("GameHandler"))
 -- Init
 local Map = {}
 Map.__index = Map
@@ -45,6 +45,7 @@ function Map:New(position: Vector3, size: Vector3)
 	local newMap = {}
 	newMap.Position = position
 	newMap.Size = size
+	newMap.GameIndex = 1
 	-- init map
 	for x = 1, size.X do
 		newMap[x] = {}
@@ -59,25 +60,39 @@ function Map:New(position: Vector3, size: Vector3)
 	return newMap
 end
 
--- Methods
-function Map:GetObjectPosition(x: int, y: int, z: int)
+-- Functions/Methods
+--		Getters Start
+function Map:GetGame()
+	return GameHandler.GetGame(self.GameIndex)
+end
+
+function Map:GetMap()
+	return GameHandler:GetMap(self.GameIndex)
+end
+
+function Map:GetEnemies()
+	return GameHandler:GetEnemies(self.GameIndex)
+end
+--		Getters End
+function Map:GetObjectPosition(x: number, y: number, z: number)
 	-- doesn't work
 	--return Vector3.new(self.Position.X + self.Size.X + (8*x), self.Position.Y + self.Size.Y + (8*y), self.Position.Z + self.Size.Z + (8*z))
 	-- works
 	--return Vector3.new(self.Position.X + self.Size.X + (8*x) - 18, self.Position.Y + self.Size.Y + (8*y) - 12, self.Position.Z + self.Size.Z + (8*z) - 18)
-	-- works
+	-- doesn't work
 	--return Vector3.new(self.Position.X + self.Size.X + (8*x), self.Position.Y + self.Size.Y + (8*y), self.Position.Z + self.Size.Z + (8*z)) - Vector3.new(18, 12, 18)
 	-- works
 	return self.Position + Vector3.new(8*x, 8*y, 8*z) - Vector3.new(8, 8, 8)
 end
 
-function Map:SetCell(x: int, y: int, z: int, Object: Object)
+function Map:SetCell(x: number, y: number, z: number, object: Object)
 	if self[x][y][z].Part ~= nil then -- if there already is an object, update it instead of setting a new one
-		self:UpdateCell(x, y, z, Object)
+		self:UpdateCell(x, y, z, object)
 	else
-		self[x][y][z] = Object
-		Object.Part.Position = self:GetObjectPosition(x, y, z)
-		Object.Position = {
+		object.GameIndex = self.GameIndex
+		self[x][y][z] = object
+		object.Part.Position = self:GetObjectPosition(x, y, z)
+		object.Position = {
 			x = x,
 			y = y,
 			z = z
@@ -85,10 +100,11 @@ function Map:SetCell(x: int, y: int, z: int, Object: Object)
 	end
 end
 
-function Map:UpdateCell(x: int, y: int, z: int, Object: Object)
+function Map:UpdateCell(x: number, y: number, z: number, object: Object)
+	object.GameIndex = self.GameIndex
 	self[x][y][z] = nil
-	self[x][y][z] = Object
-	Object.Part.Position = self:GetObjectPosition(x, y, z)
+	self[x][y][z] = object
+	object.Part.Position = self:GetObjectPosition(x, y, z)
 end
 
 function Map:Build(version: string)
@@ -117,7 +133,7 @@ function Map:Build(version: string)
 			self:SetCell(6,2,8, Object.New("Wall"))
 			self:SetCell(4,2,10, Object.New("Wall"))
 		end)
-		
+
 		-- bullshit end	
 	elseif version == "1" then
 		self:SetCell(1, 1, 1, Object.New("Random"))
@@ -154,7 +170,7 @@ function Map:ShowDebug()
 						newSurfaceGui.Parent = self[x][y][z].Part
 					end
 				end
-				
+
 			end
 		end
 	end
@@ -177,7 +193,7 @@ function Map:HideDebug()
 	end
 end
 
-function Map:GetNeighbourFrom(x: IntValue, y: IntValue, z: IntValue, direction: StringValue)
+function Map:GetNeighbourFrom(x: number, y: number, z: number, direction: StringValue)
 	local newX = x + Directions[direction].x
 	local newY = y + Directions[direction].y
 	local newZ = z + Directions[direction].z
@@ -190,7 +206,7 @@ function Map:GetNeighbourFrom(x: IntValue, y: IntValue, z: IntValue, direction: 
 	end
 end
 
-function Map:GetNeighbours(x: IntValue, y: IntValue, z: IntValue)
+function Map:GetNeighbours(x: number, y: number, z: number)
 	local neighbours = {}
 	for direction in Directions do
 		if self:GetNeighbourFrom(x, y, z, direction) ~= nil then
@@ -200,7 +216,7 @@ function Map:GetNeighbours(x: IntValue, y: IntValue, z: IntValue)
 	return neighbours
 end
 
-function Map:GetNeighboursAsDict(x: IntValue, y: IntValue, z: IntValue)
+function Map:GetNeighboursAsDict(x: number, y: number, z: number)
 	local neighbours = {}
 	for direction in Directions do
 		if self:GetNeighbourFrom(x, y, z, direction) ~= nil then
@@ -210,7 +226,7 @@ function Map:GetNeighboursAsDict(x: IntValue, y: IntValue, z: IntValue)
 	return neighbours
 end
 
-function Map:GetObjectFromXYZ(x: IntValue, y: IntValue, z: IntValue)
+function Map:GetObjectFromXYZ(x: number, y: number, z: number)
 	return self[x][y][z]
 end
 
