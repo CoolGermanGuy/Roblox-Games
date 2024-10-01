@@ -12,21 +12,62 @@ local GameHandler = require(ReplicatedStorage:WaitForChild("GameHandler"))
 local ObjectKinds = {
 	["Grass"] = {
 		["Walkable"] = true,
+		["Jumpable"] = true,
 		["Part"] = ReplicatedStorage.Objects.Grass,
 	},
 	["Wall"] = {
-		["Walkable"] = false,
+		["Walkable"] = true,
+		["Jumpable"] = false,
 		["Part"] = ReplicatedStorage.Objects.Wall,
 	},
 	["Water"] = {
 		["Walkable"] = false,
+		["Jumpable"] = false,
 		["Part"] = ReplicatedStorage.Objects.Water,
+	},
+	["Stone"] = {
+		["Walkable"] = true,
+		["Jumpable"] = true,
+		["Part"] = ReplicatedStorage.Objects.Stone
 	},
 	["Air"] = {
 		["Walkable"] = false,
 		["Part"] = ReplicatedStorage.Objects.Air,
 		["Transparency"] = 1,
 	},
+}
+
+local Directions = {
+	["Left"] = {
+		x = 0,
+		y = 0,
+		z = -1
+	},
+	["Right"] = {
+		x = 0,
+		y = 0,
+		z = 1
+	},
+	["Back"] = {
+		x = -1,
+		y = 0,
+		z = 0
+	},
+	["Front"] = {
+		x = 1,
+		y = 0,
+		z = 0
+	},
+	["Down"] = {
+		x = 0,
+		y = -1,
+		z = 0
+	},
+	["Up"] = {
+		x = 0,
+		y = 1,
+		z = 0
+	}
 }
 
 -- New
@@ -39,7 +80,12 @@ function Object.New(kind: string, override: {})
 		end
 		kind = keys[math.random(#keys)]
 	end
-
+	
+	newObject.Position = {
+		x = 0,
+		y = 0,
+		z = 0
+	}
 	newObject.GameIndex = 0
 	newObject.Kind = kind
 	newObject.Part = ObjectKinds[kind]["Part"]:Clone()
@@ -65,7 +111,7 @@ function Object:GetGame()
 end
 
 function Object:GetMap()
-	return GameHandler:GetMap(self.GameIndex)
+	return GameHandler.GetMap(self.GameIndex)
 end
 
 function Object:GetEnemies()
@@ -73,5 +119,30 @@ function Object:GetEnemies()
 end
 --		Getters End
 
+function Object:GetNeighbourFrom(direction: string)
+	local newX = self.Position.x + Directions[direction].x
+	local newY = self.Position.y + Directions[direction].y
+	local newZ = self.Position.z + Directions[direction].z
+	
+	local map = self:GetMap()
+	
+	if newX <= map.Size.X and newY <= map.Size.Y and newZ <= map.Size.Z then -- if its inside the map
+		if newX > 0 and newY > 0 and newZ > 0 then -- if its inside the map
+			if map[newX][newY][newZ].Part ~= nil then -- if there is an object
+				return map[newX][newY][newZ]
+			end
+		end
+	end
+end
+
+function Object:GetNeighbours()
+	local neighbours = {}
+	for direction in Directions do
+		if self:GetNeighbourFrom(direction) ~= nil then
+			table.insert(neighbours, self:GetNeighbourFrom(direction))
+		end
+	end
+	return neighbours
+end
 
 return Object
