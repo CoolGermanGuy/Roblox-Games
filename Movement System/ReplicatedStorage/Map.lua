@@ -89,18 +89,23 @@ function Map:SetCell(x: number, y: number, z: number, object: Object)
 	if self[x][y][z].Part ~= nil then -- if there already is an object, update it instead of setting a new one
 		self:UpdateCell(x, y, z, object)
 	else
-		object.GameIndex = self.GameIndex
-		self[x][y][z] = object
-		object.Part.Position = self:GetObjectPosition(x, y, z)
 		object.Position = {
 			x = x,
 			y = y,
 			z = z
 		}
+		object.GameIndex = self.GameIndex
+		self[x][y][z] = object
+		object.Part.Position = self:GetObjectPosition(x, y, z)
 	end
 end
 
 function Map:UpdateCell(x: number, y: number, z: number, object: Object)
+	object.Position = {
+		x = x,
+		y = y,
+		z = z
+	}
 	object.GameIndex = self.GameIndex
 	self[x][y][z] = nil
 	self[x][y][z] = object
